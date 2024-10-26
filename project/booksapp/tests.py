@@ -10,9 +10,9 @@ conn = psycopg2.connect(
 )
 cursor = conn.cursor()
 
-for i in range(9,100):
-    random_double = round(random.uniform(1, 5),2)
-    cursor.execute(f"INSERT INTO book values({i},'книга{i}','автор{i}','описание{i}','тег3',{random_double})")
+for i in range(1,100):
+    photo_url = f"https://www.gutenberg.org/cache/epub/{i}/pg{i}.cover.medium.jpg"
+    cursor.execute(f"update book set photo_url = '{photo_url}' where id={i}")
 
 conn.commit()
 cursor.close()

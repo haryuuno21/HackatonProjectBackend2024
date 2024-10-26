@@ -25,6 +25,7 @@ class Book(models.Model):
     description = models.TextField(verbose_name="Описание книги",null=True)
     tags = models.TextField(verbose_name = "теги",null=True)
     rating = models.FloatField(default=0.0)
+    photo_url = models.URLField(null=True)
 
     objects = BookManager()
 
