@@ -190,7 +190,22 @@ def get_author_description(request, id):
     page = wiki_wiki.page(author.name)
 
     if page.exists():
-        return Response({"description": page.summary}, status=status.HTTP_200_OK)
+        description = page.summary
+        response = requests.get(
+            f"https://en.wikipedia.org/api/rest_v1/page/summary/{page.title}"
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            image_url = data.get("thumbnail", {}).get("source", None)
+        else:
+            image_url = None
+
+        return Response({
+            "name": author.name,
+            "description": description,
+            "image_url": image_url
+        }, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Статья о данном авторе не найдена."}, status=status.HTTP_404_NOT_FOUND)
     
