@@ -56,12 +56,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 class BookRatingSerializer(serializers.ModelSerializer):
     book_id = PartBookSerializer()
-    user_id = UserSerializer()
-
-    
     class Meta:
-        model = Book
-        fields = ["book_id","user_id","rating"]
+        model = BookRating
+        fields = ["book_id","rating"]
 
 
 

@@ -142,14 +142,21 @@ def get_recommendations(request, format=None):
     user = getUser(request)
     author_vector, genre_vector = get_user_vectors(user)
     books_with_weights = []
-    
-    for book in Book.objects.all():
+
+    author_ids = [i for i, x in enumerate(author_vector) if x != 0]
+    genre_ids = [i for i, x in enumerate(genre_vector) if x != 0]
+
+    books = Book.objects.filter(
+        models.Q(author_id__in=author_ids) | models.Q(genre_id__in=genre_ids)
+    ).distinct() 
+
+    for book in books:
         weight = get_book_weight(author_vector, genre_vector, book)
-        books_with_weights.append([book, weight])
-    
+        books_with_weights.append((book, weight))
+
     books_with_weights.sort(key=lambda x: x[1], reverse=True)
-    top_books = [book for book, weight in books_with_weights[:20]]
-    
+    top_books = [book for book, _ in books_with_weights[:20]]
+
     serializer = PartBookSerializer(top_books, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -173,3 +180,11 @@ def get_author_description(request, id):
         return Response({"description": page.text}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Статья о данном авторе не найдена."}, status=status.HTTP_404_NOT_FOUND)
+    
+@api_view(['Get'])
+@permission_classes([IsAuthenticated])
+def get_user_books(request):
+    user = getUser(request)
+    user_rates = BookRating.objects.filter(user_id = user)
+    serializer = BookRatingSerializer(user_rates,many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

@@ -9,7 +9,6 @@ def get_user_vectors(user):
     readBooks = BookRating.objects.filter(user_id = user)
     authors_count = Author.objects.aggregate(Max('id'))['id__max']
     genres_count = Genre.objects.aggregate(Max('id'))['id__max']
-    print("1")
     author_vector = np.zeros(authors_count+1)
     genre_vector = np.zeros(genres_count+1)
     for readBook in readBooks:
@@ -23,7 +22,7 @@ def get_user_vectors(user):
 def get_book_weight(author_vector, genre_vector, book):
     norm_author = np.linalg.norm(author_vector)
     norm_genre = np.linalg.norm(genre_vector)
-    print(book.id)
+
     if norm_author == 0:
         cos_author = 0
     else:

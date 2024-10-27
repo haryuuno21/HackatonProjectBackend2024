@@ -14,6 +14,7 @@ urlpatterns = [
     path('books/recommendations/',views.get_recommendations, name='recommendations'),
 
     path('users/registration/',views.registration,name='registration'),
+    path('users/books/',views.get_user_books,name='get_user_books'),
     path('users/<int:id>/',views.put_user,name='put_user'),
     path('users/authentication/',views.authentication,name='authentication'),
     path('users/deauthorization/',views.deauthorization,name='deauthorization'),
