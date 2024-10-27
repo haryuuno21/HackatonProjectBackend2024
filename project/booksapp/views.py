@@ -13,6 +13,7 @@ from hahaton import settings
 import redis
 import uuid
 import requests
+import wikipediaapi
 
 session_storage = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
@@ -114,7 +115,9 @@ def authentication(request, format=None):
 def deauthorization(request,format=None):
     ssid = request.COOKIES["session_id"]
     session_storage.delete(ssid)
-    return Response({'status': 'Success'})
+    response = Response({'status': 'Success'})
+    response.delete_cookie("session_id")
+    return response
 
 @api_view(['Get'])
 def fetch_book_text(request, id):
@@ -127,3 +130,45 @@ def fetch_book_text(request, id):
         print(f"Не удалось загрузить текст книги: {e}")
         return Response({"error": "Не удалось загрузить текст книги."}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['Get'])
+def get_books_by_author(request, id):
+    books = Book.objects.filter(author_id = id)
+    serializer = PartBookSerializer(books,many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_recommendations(request, format=None):
+    user = getUser(request)
+    author_vector, genre_vector = get_user_vectors(user)
+    books_with_weights = []
+    
+    for book in Book.objects.all():
+        weight = get_book_weight(author_vector, genre_vector, book)
+        books_with_weights.append([book, weight])
+    
+    books_with_weights.sort(key=lambda x: x[1], reverse=True)
+    top_books = [book for book, weight in books_with_weights[:20]]
+    
+    serializer = PartBookSerializer(top_books, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def get_author_description(request, id):
+    author = Author.objects.filter(id=id).first()
+
+    if author is None:
+        return Response({"error": "Автор не найден."}, status=status.HTTP_404_NOT_FOUND)
+
+    wiki_wiki = wikipediaapi.Wikipedia(
+        language='en',
+        extract_format=wikipediaapi.ExtractFormat.WIKI,
+        user_agent="YourAppName/1.0 (https://yourwebsite.com; your-email@example.com)"
+    )
+
+    page = wiki_wiki.page(author.name)
+
+    if page.exists():
+        return Response({"description": page.text}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Статья о данном авторе не найдена."}, status=status.HTTP_404_NOT_FOUND)

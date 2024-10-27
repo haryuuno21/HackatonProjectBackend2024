@@ -11,6 +11,7 @@ urlpatterns = [
     path('books/', views.get_books, name='books-list'),
     path('books/<int:id>/', views.get_book, name='book-detail'),
     path('books/<int:id>/rate_book/', views.rate_book, name='book-rate'),
+    path('books/recommendations/',views.get_recommendations, name='recommendations'),
 
     path('users/registration/',views.registration,name='registration'),
     path('users/<int:id>/',views.put_user,name='put_user'),
@@ -18,6 +19,8 @@ urlpatterns = [
     path('users/deauthorization/',views.deauthorization,name='deauthorization'),
 
     path('books/<int:id>/fetch',views.fetch_book_text,name='fetch'),
+    path('authors/<int:id>/books',views.get_books_by_author,name='get_books_by_author'),
+    path('authors/<int:id>/description', views.get_author_description, name='get_author_description'),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
