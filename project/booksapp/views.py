@@ -169,7 +169,7 @@ def get_recommendations(request, format=None):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['Get'])
+@api_view(['GET'])
 def get_author_description(request, id):
     author = Author.objects.filter(id=id).first()
 
@@ -185,7 +185,7 @@ def get_author_description(request, id):
     page = wiki_wiki.page(author.name)
 
     if page.exists():
-        return Response({"description": page.text}, status=status.HTTP_200_OK)
+        return Response({"description": page.summary}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Статья о данном авторе не найдена."}, status=status.HTTP_404_NOT_FOUND)
     
