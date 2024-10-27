@@ -8,11 +8,11 @@ from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from booksapp.permissions import *
-from django.conf import settings
+from hahaton import settings
 import redis
 import uuid
 
-session_storage = redis.Redis(host='localhost', port=6380, db=0)
+session_storage = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
 def getUser(request):
     try:
