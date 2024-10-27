@@ -136,7 +136,7 @@ def get_books_by_author(request, id):
     serializer = PartBookSerializer(books,many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['Get'])
 @permission_classes([IsAuthenticated])
 def get_recommendations(request, format=None):
     user = getUser(request)
@@ -154,6 +154,7 @@ def get_recommendations(request, format=None):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['Get'])
 def get_author_description(request, id):
     author = Author.objects.filter(id=id).first()
 
@@ -163,7 +164,7 @@ def get_author_description(request, id):
     wiki_wiki = wikipediaapi.Wikipedia(
         language='en',
         extract_format=wikipediaapi.ExtractFormat.WIKI,
-        user_agent="YourAppName/1.0 (https://yourwebsite.com; your-email@example.com)"
+        user_agent="booksapp/1.0 (https://mybookapp.com; myemail@example.com)"
     )
 
     page = wiki_wiki.page(author.name)

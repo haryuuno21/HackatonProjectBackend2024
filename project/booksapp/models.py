@@ -40,6 +40,8 @@ class Book(models.Model):
     genre = models.ForeignKey(Genre, models.DO_NOTHING, blank=True, null=True)
     rating = models.FloatField(blank=True, null=True)
 
+    objects = BookManager()
+
     class Meta:
         managed = False
         db_table = 'books'
@@ -48,6 +50,8 @@ class BookRating(models.Model):
     book_id = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name="Книга")
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, verbose_name="Пользователь")
     rating = models.IntegerField(verbose_name="Рейтинг",null=True)
+
+
     class Meta:
         db_table = "rating"
         constraints = [

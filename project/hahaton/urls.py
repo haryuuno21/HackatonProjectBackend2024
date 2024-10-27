@@ -18,9 +18,9 @@ urlpatterns = [
     path('users/authentication/',views.authentication,name='authentication'),
     path('users/deauthorization/',views.deauthorization,name='deauthorization'),
 
-    path('books/<int:id>/fetch',views.fetch_book_text,name='fetch'),
-    path('authors/<int:id>/books',views.get_books_by_author,name='get_books_by_author'),
-    path('authors/<int:id>/description', views.get_author_description, name='get_author_description'),
+    path('books/<int:id>/fetch/',views.fetch_book_text,name='fetch'),
+    path('authors/<int:id>/books/',views.get_books_by_author,name='get_books_by_author'),
+    path('authors/<int:id>/description/', views.get_author_description, name='get_author_description'),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
