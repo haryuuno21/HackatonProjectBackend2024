@@ -58,11 +58,13 @@ def get_book(request,id,format=None):
         return Response(data,status=status.HTTP_200_OK)
     if user:
         serializer = FullBookSerializer(book)
-        book_rating = BookRating.objects.get(user_id = user,book_id = book)
-        if not book_rating:
+        try:
+            rate = BookRating.objects.get(book_id = book, user_id = user)
+        except BookRating.DoesNotExist:
             data = serializer.data | {'user_rating':0}
-        else:
-            data = serializer.data | {'user_rating':book_rating.rating}
+            return Response(data,status=status.HTTP_200_OK)
+        
+        data = serializer.data | {'user_rating':rate.rating}
         return Response(data,status=status.HTTP_200_OK)
 
 @api_view(["Post"])
