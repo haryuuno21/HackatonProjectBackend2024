@@ -14,23 +14,24 @@ def get_user_vectors(user):
     for readBook in readBooks:
         rating = readBook.rating
         book = Book.objects.get(id = readBook.book_id.id)
-        author_vector[book.author.id] += rating - 2
-        genre_vector[book.genre.id] += rating - 2
+        author_vector[book.author_id] += rating - 2
+        genre_vector[book.genre_id] += rating - 2
 
     return (author_vector,genre_vector)
-
-def get_book_weight(author_vector, genre_vector, book):
+def get_norms(author_vector,genre_vector):
     norm_author = np.linalg.norm(author_vector)
     norm_genre = np.linalg.norm(genre_vector)
+    return (norm_author, norm_genre)
 
+def get_book_weight(author_vector, genre_vector,norm_author,norm_genre, book):
     if norm_author == 0:
         cos_author = 0
     else:
-        cos_author = author_vector[book.author.id]/norm_author
+        cos_author = author_vector[book.author_id]/norm_author
     if norm_genre == 0:
         cos_genre = 0
     else:
-        cos_genre = genre_vector[book.genre.id]/norm_genre
+        cos_genre = genre_vector[book.genre_id]/norm_genre
 
     weight = (cos_author*author_k+cos_genre)/author_k
 

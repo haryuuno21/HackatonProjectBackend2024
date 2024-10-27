@@ -141,6 +141,7 @@ def get_books_by_author(request, id):
 def get_recommendations(request, format=None):
     user = getUser(request)
     author_vector, genre_vector = get_user_vectors(user)
+    norm_author, norm_genre = get_norms(author_vector,genre_vector)
     books_with_weights = []
 
     author_ids = [i for i, x in enumerate(author_vector) if x > 0]
@@ -151,7 +152,7 @@ def get_recommendations(request, format=None):
     ).distinct() 
 
     for book in books:
-        weight = get_book_weight(author_vector, genre_vector, book)
+        weight = get_book_weight(author_vector, genre_vector,norm_author,norm_genre,book)
         books_with_weights.append((book, weight))
 
     books_with_weights.sort(key=lambda x: x[1], reverse=True)
