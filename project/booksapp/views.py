@@ -30,7 +30,7 @@ def get_books(request, format=None):
     if not book_name:
         books = Book.objects.all()[start_id:start_id+10]
     else:
-        books = Book.objects.filter(book_name__icontains = book_name)[start_id:start_id+10]
+        books = Book.objects.filter(name__icontains = book_name)[start_id:start_id+10]
     serializer = PartBookSerializer(books,many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
