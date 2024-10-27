@@ -117,9 +117,8 @@ def deauthorization(request,format=None):
     return Response({'status': 'Success'})
 
 @api_view(['Get'])
-def fetch_book_text(request):
-    book_id = request.data.get("id")
-    book_url = f"https://www.gutenberg.org/cache/epub/{book_id}/pg{book_id}.txt"
+def fetch_book_text(request, id):
+    book_url = f"https://www.gutenberg.org/cache/epub/{id}/pg{id}.txt"
     try:
         response = requests.get(book_url)
         response.raise_for_status()
@@ -128,13 +127,3 @@ def fetch_book_text(request):
         print(f"Не удалось загрузить текст книги: {e}")
         return Response({"error": "Не удалось загрузить текст книги."}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['Get'])
-def get_recommendations(request,format=None):
-    user = getUser(request)
-    author_vector, genre_vector = get_user_vectors(user)
-    books = list()
-    for book in Book.objects.all():
-        weight = get_book_weight(author_vector,genre_vector,book)
-        books.append([book,weight])
-    books.sort(key=lambda x: x[1])
-    serializer = PartBookSerializer(book,many=True)
