@@ -50,10 +50,20 @@ def get_books(request, format=None):
 @api_view(['Get'])
 def get_book(request,id,format=None):
     book = get_object_or_404(Book,id=id)
-    serializer = FullBookSerializer(book)
-    data = serializer.data
+    user = getUser(request)
+    if not user:
+        serializer = FullBookSerializer(book)
+        data = serializer.data | {'user_rating':0}
     
-    return Response(data,status=status.HTTP_200_OK)
+        return Response(data,status=status.HTTP_200_OK)
+    if user:
+        serializer = FullBookSerializer(book)
+        book_rating = BookRating.objects.get(user_id = user,book_id = book)
+        if not book_rating:
+            data = serializer.data | {'user_rating':0}
+        else:
+            data = serializer.data | {'user_rating':book_rating.rating}
+        return Response(data,status=status.HTTP_200_OK)
 
 @api_view(["Post"])
 @permission_classes([IsAuthenticated])
