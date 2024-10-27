@@ -11,12 +11,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-class Author(models.Model):
-    name = models.TextField(unique=True, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'authors'
 
 class BookManager(models.Manager):
     def get_book_rating(self, book):
@@ -25,24 +19,18 @@ class BookManager(models.Manager):
     def get_books_rating(self):
         return BookRating.objects.annotate(models.Avg("BookRating"))
 
-class Genre(models.Model):
-    genre_name = models.CharField(unique=True, max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'genres'
-
-
 class Book(models.Model):
-    name = models.TextField(blank=True, null=True)
-    id = models.BigIntegerField(primary_key=True)
-    author = models.ForeignKey(Author, models.DO_NOTHING, blank=True, null=True)
-    genre = models.ForeignKey(Genre, models.DO_NOTHING, blank=True, null=True)
-    rating = models.FloatField(blank=True, null=True)
+    book_name = models.CharField(max_length=100, verbose_name="Название книги")
+    author_name = models.CharField(max_length=100, verbose_name="Автор",null=True)
+    description = models.TextField(verbose_name="Описание книги",null=True)
+    tags = models.TextField(verbose_name = "теги",null=True)
+    rating = models.FloatField(default=0.0)
+    photo_url = models.URLField(null=True)
+
+    objects = BookManager()
 
     class Meta:
-        managed = False
-        db_table = 'books'
+        db_table = "book"
 
 class BookRating(models.Model):
     book_id = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name="Книга")

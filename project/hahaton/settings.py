@@ -86,7 +86,7 @@ WSGI_APPLICATION = "hahaton.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "projectdb",
+        "NAME": "books_project",
         "USER": "haryuuno",
         "PASSWORD": "Pe59%YARD228339#",
         "HOST": "77.105.167.59",
