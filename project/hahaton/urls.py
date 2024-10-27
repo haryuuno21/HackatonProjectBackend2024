@@ -20,6 +20,7 @@ urlpatterns = [
     path('users/deauthorization/',views.deauthorization,name='deauthorization'),
 
     path('books/<int:id>/fetch/',views.fetch_book_text,name='fetch'),
+    path('books/<int:id>/fetch_pages/',views.fetch_book_text_by_pages,name='fetch_pages'),
     path('authors/<int:id>/books/',views.get_books_by_author,name='get_books_by_author'),
     path('authors/<int:id>/', views.get_author, name='get_author_description'),
     path('authors/<int:id>/description/', views.get_author_description, name='get_author_description'),

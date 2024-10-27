@@ -141,6 +141,39 @@ def fetch_book_text(request, id):
     except requests.exceptions.RequestException as e:
         print(f"Не удалось загрузить текст книги: {e}")
         return Response({"error": "Не удалось загрузить текст книги."}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def fetch_book_text_by_pages(request, id):
+    page_size = 2000  # Количество символов на "страницу"
+    page = int(request.query_params.get("page", 1))  # Номер страницы, по умолчанию 1
+    book_url = f"https://www.gutenberg.org/cache/epub/{id}/pg{id}.txt"
+
+    try:
+        response = requests.get(book_url)
+        response.raise_for_status()
+        
+        book_text = response.text
+        total_pages = (len(book_text) + page_size - 1) // page_size 
+        
+        if page < 1 or page > total_pages:
+            return Response(
+                {"error": "Неверный номер страницы."}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        start = (page - 1) * page_size
+        end = start + page_size
+        page_text = book_text[start:end]
+        
+        return Response({
+            "page": page,
+            "total_pages": total_pages,
+            "text": page_text
+        }, status=status.HTTP_200_OK)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Не удалось загрузить текст книги: {e}")
+        return Response({"error": "Не удалось загрузить текст книги."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['Get'])
 def get_books_by_author(request, id):
