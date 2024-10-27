@@ -144,14 +144,9 @@ def get_recommendations(request, format=None):
     norm_author, norm_genre = get_norms(author_vector,genre_vector)
     books_with_weights = []
 
-    author_ids = [i for i, x in enumerate(author_vector) if x > 0]
-    genre_ids = [i for i, x in enumerate(genre_vector) if x > 0]
+    books_idx = BookRating.objects.filter(user_id=user).values_list('book_id', flat=True)
 
-    books = Book.objects.filter(
-        models.Q(author_id__in=author_ids) | models.Q(genre_id__in=genre_ids)
-    ).distinct() 
-
-    for book in books:
+    for book in Book.objects.exclude(id__in=books_idx):
         weight = get_book_weight(author_vector, genre_vector,norm_author,norm_genre,book)
         books_with_weights.append((book, weight))
 
