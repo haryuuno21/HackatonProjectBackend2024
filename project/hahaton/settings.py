@@ -139,3 +139,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "booksapp.CustomUser"
+
+
+REDIS_HOST = "77.105.167.59"
+REDIS_PORT = "6380"

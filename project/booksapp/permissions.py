@@ -1,8 +1,9 @@
 from rest_framework import permissions
 from booksapp.models import CustomUser
+from hahaton import settings
 import redis
 
-session_storage = redis.Redis(host='localhost', port=6380, db=0)
+session_storage = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=0)
 
 class IsAuthenticated(permissions.BasePermission):
     def has_permission(self, request, view):
