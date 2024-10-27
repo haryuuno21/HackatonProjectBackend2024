@@ -168,6 +168,11 @@ def get_recommendations(request, format=None):
     serializer = PartBookSerializer(top_books, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def get_author(request, id):
+    author = Author.objects.filter(id=id).first()
+    serializer = AuthorSerializer(author)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_author_description(request, id):
