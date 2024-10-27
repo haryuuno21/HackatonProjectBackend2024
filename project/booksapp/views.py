@@ -143,8 +143,8 @@ def get_recommendations(request, format=None):
     author_vector, genre_vector = get_user_vectors(user)
     books_with_weights = []
 
-    author_ids = [i for i, x in enumerate(author_vector) if x != 0]
-    genre_ids = [i for i, x in enumerate(genre_vector) if x != 0]
+    author_ids = [i for i, x in enumerate(author_vector) if x > 0]
+    genre_ids = [i for i, x in enumerate(genre_vector) if x > 0]
 
     books = Book.objects.filter(
         models.Q(author_id__in=author_ids) | models.Q(genre_id__in=genre_ids)
