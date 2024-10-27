@@ -23,7 +23,7 @@ class PartBookSerializer(serializers.ModelSerializer):
         return obj.author.name if obj.author else None
 
 class FullBookSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField()
+    author = AuthorSerializer()
     genre = serializers.SerializerMethodField()
     class Meta:
         model = Book

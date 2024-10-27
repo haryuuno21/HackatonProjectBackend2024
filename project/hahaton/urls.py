@@ -20,4 +20,6 @@ urlpatterns = [
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
+
+    path('books/<int:id>/get_authors_vector/', views.get_book_author_vector, name='book-detail'),
 ]

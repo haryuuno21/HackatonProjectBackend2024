@@ -1,14 +1,28 @@
 import numpy as np
-from booksapp import models
-from django.shortcuts import get_object_or_404
+from booksapp.models import *
 
+author_k = 1.5
 
+def get_user_vectors(user):
+    readBooks = BookRating.objects.filter(user_id = user)
+    authors_count = Author.objects.count()
+    genres_count = Genre.objects.count()
+    author_vector = np.zeros(authors_count+1)
+    genre_vector = np.zeros(genres_count+1)
+    for readBook in readBooks:
+        rating = readBook.rating
+        book = Book.objects.filter(id = readBook.book_id)
+        author_vector[book.author.id] += rating - 2
+        genre_vector[book.genre.id] += rating - 2
 
-def get_author_vector(book_id):
-    authors_count = models.Genre.objects.count()
-    vector = np.zeros(authors_count)
-    book = get_object_or_404(book, id = book_id)
-    vector[] = 1 
-    return vector
+    return (author_vector,genre_vector)
 
-def get_genres_vector(book_id):
+def get_book_weight(author_vector, genre_vector, book):
+    norm_author = np.linalg.norm(author_vector)
+    norm_genre = np.linalg.norm(genre_vector)
+    cos_author = author_vector[book.author.id]/norm_author
+    cos_genre = genre_vector[book.genre.id]/norm_genre
+
+    weight = (cos_author*author_k+cos_genre)/author_k
+
+    return weight
